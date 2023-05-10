@@ -1,7 +1,9 @@
 package com.evox.evoxbackend.repository;
 
-import com.evox.evoxbackend.dto.SessionDto;
+import com.evox.evoxbackend.model.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface SessionRepository  extends JpaRepository<SessionDto , Integer> {
+@Repository
+public interface SessionRepository  extends JpaRepository<Session, Integer> {
 }
