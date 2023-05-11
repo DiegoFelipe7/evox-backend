@@ -30,41 +30,24 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-//    public Mono<TokenDto> login(LoginDto dto) {
-//        return Mono.just(repository.findByUsernameOrEmail(dto.getEmail() ,dto.getEmail()))
-//                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST,"user is not registered")))
-//                .filter(user -> passwordEncoder.matches(dto.getPassword(), user.getPassword()))
-//                .flatMap(user ->{
-//                    if (Boolean.TRUE.equals(user.getStatus())) {
-//                       return Mono.just(new TokenDto(jwtProvider.generateToken(user)));
-//                    }
-//                        return Mono.error(new CustomException(HttpStatus.NOT_ACCEPTABLE ,"inactive user"));
-//                })
-//                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "bad credentials")));
-//    }
-
-//    public Mono<TokenDto> login(LoginDto dto) {
-//        return Mono.just(repository.findByUsernameOrEmail(dto.getEmail(), dto.getEmail()))
-//                .filter(user -> passwordEncoder.matches(dto.getPassword(), user.getPassword()))
-//                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "Bad credentials")))
-//                .flatMap(user -> {
-//                    if (Boolean.TRUE.equals(user.getStatus())) {
-//                        String token = jwtProvider.generateToken(user);
-//                        return Mono.just(new TokenDto(token));
-//                    } else {
-//                        return Mono.error(new CustomException(HttpStatus.NOT_ACCEPTABLE, "Inactive user"));
-//                    }
-//                })
-//                .onErrorMap(ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while processing the request."));
-//    }
-
-
     public Mono<TokenDto> login(LoginDto dto) {
-        return Mono.just(repository.findByUsernameOrEmail(dto.getEmail(), dto.getEmail()))
-                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.NOT_FOUND, "No existe")))
-                .map(ele -> new TokenDto("melo"));
-
+        return Flux.fromIterable(repository.findAll()).filter(ele->ele.getEmail().equalsIgnoreCase(ele.getEmail()))
+                .next()
+                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST,"user is not registered")))
+                .filter(user -> passwordEncoder.matches(dto.getPassword(), user.getPassword()))
+                .flatMap(user ->{
+                    if (Boolean.TRUE.equals(user.getStatus())) {
+                       return Mono.just(new TokenDto(jwtProvider.generateToken(user)));
+                    }
+                        return Mono.error(new CustomException(HttpStatus.NOT_ACCEPTABLE ,"inactive user"));
+                })
+                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "bad credentials")));
     }
+
+
+
+
+
 
 
     public Mono<String> accountRegistration(User user) {
@@ -87,6 +70,7 @@ public class AuthService {
         if (user.getInvitationLink() == null) {
             return Mono.just(repository.save(user)).flatMap(ele -> Mono.just("Welcome to evox " + ele.getFullName()));
         }
+        //:TODO CAMBIO AQUI
         return Mono.just(repository.findByUsernameIgnoreCase(extractUsername(user.getInvitationLink())))
                 .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "Reference link does not exist")))
                 .flatMap(parent -> {
@@ -100,7 +84,9 @@ public class AuthService {
     }
 
     public Mono<String> passwordRecovery(LoginDto email) {
-        return Mono.just(repository.findByEmail(email.getEmail()))
+        return Flux.fromIterable(repository.findAll())
+                .filter(ele->ele.getEmail().equalsIgnoreCase(email.getEmail()))
+                .next()
                 .switchIfEmpty(Mono.error(new CustomException(HttpStatus.NOT_FOUND, "This e-mail is not registered in the database.")))
                 .flatMap(ele -> {
                     if (ele.getToken() != null) {
@@ -114,12 +100,11 @@ public class AuthService {
     }
 
     public Mono<Boolean> tokenValidation(String token) {
-        return Flux.fromIterable(repository.findAll())
-                .filter(ele -> ele.getToken().equalsIgnoreCase(token))
+        return  Flux.fromIterable(repository.findAll()).filter(ele->ele.getToken().equalsIgnoreCase(token))
                 .next()
-                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "Password recovery already in progress.")))
-                .then(Mono.just(false));
-
+                .hasElement()
+                .defaultIfEmpty(false);
+        //:TODO INTENTAR CON EL MAPER PARA MIRAR EL LOG
     }
 
     private String extractUsername(String refLink) {
