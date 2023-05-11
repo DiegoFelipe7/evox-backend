@@ -1,5 +1,7 @@
 package com.evox.evoxbackend.security.config;
-import com.evox.evoxbackend.security.jtw.JwtFilter;
+
+
+import com.evox.evoxbackend.security.jwt.JwtFilter;
 import com.evox.evoxbackend.security.repository.SecurityContextRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

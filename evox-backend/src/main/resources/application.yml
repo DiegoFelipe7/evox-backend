@@ -19,5 +19,5 @@ spring:
         format_sql: true
         show_sql: true
 jwt:
-  secret: evoxtokenrestfull
+  secret: secretsecretsecretsecretsecretsecretsecretsecretsecret
   expiration : 3600

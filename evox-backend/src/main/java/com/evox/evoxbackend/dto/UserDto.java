@@ -25,6 +25,8 @@ public class UserDto {
     private String refLink;
     private String invitationLink;
     private String  roles;
+    private UserDto user;
+    private Boolean state;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

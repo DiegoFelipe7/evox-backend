@@ -1,6 +1,5 @@
 package com.evox.evoxbackend.repository;
 
-import com.evox.evoxbackend.dto.UserDto;
 import com.evox.evoxbackend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,11 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepositoryy extends JpaRepository<User, Integer> {
     @Query(value = "WITH RECURSIVE user_tree AS (\n" +
             "  SELECT *\n" +
             "  FROM users\n" +

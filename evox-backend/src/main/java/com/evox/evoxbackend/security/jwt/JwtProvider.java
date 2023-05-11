@@ -1,4 +1,4 @@
-package com.evox.evoxbackend.security.jtw;
+package com.evox.evoxbackend.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -24,6 +24,7 @@ public class JwtProvider {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("state", userDetails.isEnabled())
                 .claim("roles", userDetails.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000))

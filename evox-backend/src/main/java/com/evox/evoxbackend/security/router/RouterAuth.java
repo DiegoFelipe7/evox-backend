@@ -1,4 +1,5 @@
 package com.evox.evoxbackend.security.router;
+
 import com.evox.evoxbackend.security.handler.AuthHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -11,13 +12,15 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Slf4j
 public class RouterAuth {
 
-    private static final String PATH = "/auth/";
+    private static final String PATH = "auth/";
 
     @Bean
     RouterFunction<ServerResponse> authRouter(AuthHandler handler) {
         return RouterFunctions.route()
                 .POST(PATH + "login", handler::login)
                 .POST(PATH + "create", handler::create)
+                .POST(PATH+ "recover" , handler::passwordRecovery)
+                .GET(PATH+"validator/{token}", handler::validateToken)
                 .build();
     }
 }

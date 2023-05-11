@@ -1,6 +1,5 @@
 package com.evox.evoxbackend.dto;
 
-import com.evox.evoxbackend.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

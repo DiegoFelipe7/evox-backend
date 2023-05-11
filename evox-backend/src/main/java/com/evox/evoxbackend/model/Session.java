@@ -1,7 +1,7 @@
 package com.evox.evoxbackend.model;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 

@@ -1,7 +1,6 @@
-package com.evox.evoxbackend.security.jtw;
-import com.evox.evoxbackend.exception.LocalNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+package com.evox.evoxbackend.security.jwt;
+
+import com.evox.evoxbackend.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -29,7 +27,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
         return Mono.just(authentication)
                 .map(auth -> jwtProvider.getClaims(auth.getCredentials().toString()))
                 .log()
-                .onErrorResume(e -> Mono.error(new LocalNotFoundException( "bad token")))
+                .onErrorResume(e -> Mono.error(new CustomException(HttpStatus.UNAUTHORIZED, "bad token")))
                 .map(claims -> new UsernamePasswordAuthenticationToken(
                         claims.getSubject(),
                         null,
@@ -38,7 +36,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
                                 .flatMap(role -> role.stream()
                                         .map(r -> r.get("authority"))
                                         .map(SimpleGrantedAuthority::new))
-                                .collect(Collectors.toList())
+                                .toList()
                 ));
     }
 
