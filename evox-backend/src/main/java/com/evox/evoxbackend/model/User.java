@@ -1,18 +1,19 @@
 package com.evox.evoxbackend.model;
 
 import com.evox.evoxbackend.model.enums.TypeOfIdentification;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 
 
@@ -21,16 +22,12 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails  {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true)
     private String email;
     private String password;
-    @Column(unique = true)
     private String username;
     private String fullName;
     private TypeOfIdentification typeOfIdentification;
@@ -38,27 +35,21 @@ public class User implements UserDetails {
     private String phone;
     private String country;
     private String countryOfResidence;
-    private Boolean emailVerified;
+    private LocalDateTime emailVerified;
     private String token;
     private String photo;
     private String refLink;
     private String invitationLink;
     private String  roles;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id")
-    private User parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<User> children = new ArrayList<>();
-    private Boolean status=true;
+    private Integer parentId;
+
+    private Boolean status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-    @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }

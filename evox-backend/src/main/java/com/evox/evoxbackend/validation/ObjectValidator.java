@@ -1,5 +1,6 @@
 package com.evox.evoxbackend.validation;
 import com.evox.evoxbackend.exception.CustomException;
+import com.evox.evoxbackend.utils.enums.TypeStateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class ObjectValidator {
             return object;
         else {
             String message = errors.stream().map(err -> err.getMessage()).collect(Collectors.joining(", "));
-            throw new CustomException(HttpStatus.BAD_REQUEST, message);
+            throw new CustomException(HttpStatus.BAD_REQUEST, message , TypeStateResponse.Warning);
         }
     }
 }

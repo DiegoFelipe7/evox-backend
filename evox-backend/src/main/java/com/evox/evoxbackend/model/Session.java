@@ -1,7 +1,8 @@
 package com.evox.evoxbackend.model;
 import lombok.*;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 
 
@@ -9,18 +10,22 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "session")
 @Builder
 public class Session {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer userId;
     private String ipAddress;
     private String country;
-    private LocalDateTime userLogin;
-    @PrePersist
-    protected void onCreate() {
-        userLogin = LocalDateTime.now();
+    private String browser;
+    private LocalDateTime dateOfEntry;
+
+    public Session(Integer user, String ipAddress, String country, String browser, LocalDateTime dateOfEntry) {
+        this.userId = user;
+        this.ipAddress = ipAddress;
+        this.country = country;
+        this.browser = browser;
+        this.dateOfEntry = dateOfEntry;
     }
 }

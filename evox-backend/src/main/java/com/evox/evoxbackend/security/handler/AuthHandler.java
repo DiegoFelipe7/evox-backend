@@ -40,7 +40,7 @@ public class AuthHandler {
         return serverRequest.bodyToMono(LoginDto.class)
                 .flatMap(ele->ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(authService.passwordRecovery(ele) ,LoginDto.class));
+                        .body(authService.passwordRecovery(ele) , String.class));
     }
 
     public Mono<ServerResponse> validateToken(ServerRequest serverRequest){
@@ -48,5 +48,13 @@ public class AuthHandler {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(authService.tokenValidation(token), Boolean.class);
+    }
+
+    public Mono<ServerResponse> passwordChange(ServerRequest serverRequest){
+        String token = serverRequest.pathVariable("token");
+        return serverRequest.bodyToMono(LoginDto.class)
+                .flatMap(ele->ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(authService.passwordChange(token,ele) , String.class));
     }
 }

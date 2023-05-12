@@ -1,5 +1,6 @@
 package com.evox.evoxbackend.dto;
 
+import com.evox.evoxbackend.model.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,8 +12,9 @@ import java.time.LocalDateTime;
 @Builder
 public class SessionDto {
     private Integer id;
-    private UserDto userDto;
+    private User user;
     private String ipAddress;
     private String country;
-    private LocalDateTime userLogin;
+    private String browser;
+    private LocalDateTime dateOfEntry;
 }

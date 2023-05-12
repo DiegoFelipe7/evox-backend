@@ -1,6 +1,7 @@
 package com.evox.evoxbackend.security.jwt;
 
 import com.evox.evoxbackend.exception.CustomException;
+import com.evox.evoxbackend.utils.enums.TypeStateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -26,9 +27,9 @@ public class JwtFilter implements WebFilter {
             return chain.filter(exchange);
         String auth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if(auth == null)
-            return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "no token was found"));
+            return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "no token was found" , TypeStateResponse.Error));
         if(!auth.startsWith("Bearer "))
-            return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "invalid auth"));
+            return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "invalid auth" ,TypeStateResponse.Error));
         String token = auth.replace("Bearer ", "");
         exchange.getAttributes().put("token", token);
         return chain.filter(exchange);
