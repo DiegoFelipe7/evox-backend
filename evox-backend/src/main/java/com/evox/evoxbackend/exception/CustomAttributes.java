@@ -2,6 +2,7 @@ package com.evox.evoxbackend.exception;
 
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
@@ -18,6 +19,12 @@ public class CustomAttributes extends DefaultErrorAttributes {
         if(throwable instanceof CustomException) {
 
             CustomException customException = (CustomException) throwable;
+            errorAttributes.put("status", customException.getStatus());
+            errorAttributes.put("message", customException.getMessage());
+            errorAttributes.put("typeStatus" , customException.getTypeStatus());
+        }
+        if (throwable instanceof DataIntegrityViolationException) {
+            String message = "Error de integridad de datos";
             errorAttributes.put("status", customException.getStatus());
             errorAttributes.put("message", customException.getMessage());
             errorAttributes.put("typeStatus" , customException.getTypeStatus());

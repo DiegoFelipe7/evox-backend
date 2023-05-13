@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWe
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -33,8 +34,19 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     }
 
     private Mono<ServerResponse> customErrorResponse(ServerRequest request) {
+//        Map<String, Object> errorMap = this.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+//        HttpStatus status = (HttpStatus) Optional.ofNullable(errorMap.get("status")).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+//        return ServerResponse.status(status).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(errorMap));
         Map<String, Object> errorMap = this.getErrorAttributes(request, ErrorAttributeOptions.defaults());
         HttpStatus status = (HttpStatus) Optional.ofNullable(errorMap.get("status")).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-        return ServerResponse.status(status).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(errorMap));
+        Throwable error = getError(request);
+        if (error instanceof DataIntegrityViolationException) {
+            // Crear una respuesta personalizada para la excepción DataIntegrityViolationException
+            String message = "El correo electrónico o usuario ya están registrados";
+            return ServerResponse.status(status).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(message));
+        } else {
+            // Crear una respuesta genérica para todas las demás excepciones
+            return ServerResponse.status(status).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(errorMap));
+        }
     }
 }

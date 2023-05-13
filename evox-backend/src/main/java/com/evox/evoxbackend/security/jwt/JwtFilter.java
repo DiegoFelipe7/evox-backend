@@ -15,9 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class JwtFilter implements WebFilter {
-    private final JwtProvider jwtProvider;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

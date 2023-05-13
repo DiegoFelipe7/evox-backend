@@ -42,17 +42,10 @@ public class User implements UserDetails  {
     private String invitationLink;
     private String  roles;
     private Integer parentId;
-
     private Boolean status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

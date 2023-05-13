@@ -12,3 +12,5 @@ spring:
 jwt:
   secret: secretsecretsecretsecretsecretsecretsecretsecretsecret
   expiration : 3600
+evox:
+  url: "https://evox/ref/"

@@ -27,7 +27,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.just(authentication)
                 .map(auth -> jwtProvider.getClaims(auth.getCredentials().toString()))
-                .log()
+                //.log()
                 .onErrorResume(e -> Mono.error(new CustomException(HttpStatus.UNAUTHORIZED, "bad token" , TypeStateResponse.Error)))
                 .map(claims -> new UsernamePasswordAuthenticationToken(
                         claims.getSubject(),
