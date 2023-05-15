@@ -2,7 +2,7 @@ package com.evox.evoxbackend.security.jwt;
 
 import com.evox.evoxbackend.exception.CustomException;
 import com.evox.evoxbackend.utils.enums.TypeStateResponse;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

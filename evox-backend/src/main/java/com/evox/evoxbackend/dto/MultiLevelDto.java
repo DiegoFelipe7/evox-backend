@@ -19,6 +19,11 @@ public class MultiLevelDto {
     private Boolean status;
     private LocalDateTime dateRegistered;
 
-
-
+    public MultiLevelDto(String refLink, String userName, String fullName, Boolean status, LocalDateTime dateRegistered) {
+        this.refLink = refLink;
+        this.userName = userName;
+        this.fullName = fullName;
+        this.status = status;
+        this.dateRegistered = dateRegistered;
+    }
 }

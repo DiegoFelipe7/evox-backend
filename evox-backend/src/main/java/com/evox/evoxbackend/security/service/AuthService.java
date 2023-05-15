@@ -93,9 +93,6 @@ public class AuthService {
 
     }
 
-    public Flux<User> get(){
-        return authRepository.findAll();
-    }
 
     public Mono<Response> passwordRecovery(LoginDto email) {
         return authRepository.findByEmailIgnoreCase(email.getEmail())
@@ -128,7 +125,8 @@ public class AuthService {
                 }).map(ele -> new Response(TypeStateResponse.Success , "password successfully updated"));
     }
     public Mono<Response> activateAccount(String token){
-       return authRepository.findByToken(token)
+       return authRepository.findByToken(token).
+                 filter(ele->ele.getStatus().equals(false))
                 .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST , "the token is invalid " ,TypeStateResponse.Error)))
                 .flatMap(ele->{
                     ele.setId(ele.getId());

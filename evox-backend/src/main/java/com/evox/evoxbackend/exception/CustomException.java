@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 @Data
 public class CustomException extends Exception{
 
-    private HttpStatus status;
-    private TypeStateResponse typeStatus;
+    private final HttpStatus status;
+    private final TypeStateResponse typeStatus;
 
 
     public CustomException(HttpStatus status, String message, TypeStateResponse typeStatus) {

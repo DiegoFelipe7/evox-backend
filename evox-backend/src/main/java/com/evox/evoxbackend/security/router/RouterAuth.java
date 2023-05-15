@@ -22,7 +22,6 @@ public class RouterAuth {
                 .POST(PATH+ "recover" , handler::passwordRecovery)
                 .GET(PATH+"validator/{token}", handler::validateToken)
                 .GET(PATH+"validate" , handler::validateBearerToken)
-                .GET(PATH+"get", handler::get)
                 .GET(PATH+"activateAccount/{token}" , handler::activateAccount)
                 .PATCH(PATH+"passwordChange/{token}" ,handler::passwordChange)
                 .build();

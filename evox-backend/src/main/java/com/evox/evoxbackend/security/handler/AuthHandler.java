@@ -25,12 +25,6 @@ public class AuthHandler {
     private final AuthService authService;
     private final ObjectValidator objectValidator;
 
-    public Mono<ServerResponse> get(ServerRequest serverRequest){
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(authService.get() , User.class);
-    }
-
     public Mono<ServerResponse> login(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(LoginDto.class)
                 .flatMap(ele -> ServerResponse.ok()

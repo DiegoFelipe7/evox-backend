@@ -5,6 +5,7 @@ import com.evox.evoxbackend.dto.UserDto;
 import com.evox.evoxbackend.exception.CustomException;
 import com.evox.evoxbackend.repository.UserRepository;
 
+import com.evox.evoxbackend.security.jwt.JwtProvider;
 import com.evox.evoxbackend.utils.enums.TypeStateResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,23 +20,21 @@ import reactor.core.publisher.Mono;
 public class UserServices {
     private final UserRepository repository;
     private final ModelMapper modelMapper;
+    private final JwtProvider jwtProvider;
 
-    public Flux<UserDto> getAllUsers(){
-        return repository.findAll()
-                .map(ele->modelMapper.map(ele, UserDto.class));
-    }
 
-    public Flux<MultiLevelDto> getAllMultilevel(Integer id) {
-       return    repository.findUserAndDescendants(id)
-                 .filter(ele->!ele.getId().equals(id))
-                 .flatMap(data->{
-                    return repository.findById(data.getId()).map(ele->{
-                         return new MultiLevelDto(ele.getFullName(),ele.getRefLink(), ele.getUsername(),ele.getFullName() , ele.getStatus() , ele.getCreatedAt() );
-
-                     });
+    public Flux<MultiLevelDto> getAllMultilevel(String token) {
+        var userName = jwtProvider.extractToken(token);
+        return repository.findUserAndDescendants(userName)
+                .flatMap(data -> {
+                    if (data.getParentId() == null) {
+                        return Mono.just(new MultiLevelDto(data.getRefLink(), data.getUsername(), data.getFullName(), data.getStatus(), data.getCreatedAt()));
+                    }
+                    return repository.findById(data.getParentId())
+                            .map(ele -> new MultiLevelDto(ele.getFullName(),data.getRefLink(), data.getUsername(), data.getFullName(), data.getStatus(), data.getCreatedAt()));
                 })
-                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST,"An error has occurred please contact the administrator", TypeStateResponse.Error)));
-        //vara prueba= repository.findUserAndDescendants(id)
+                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "An error has occurred, please contact the administrator", TypeStateResponse.Error)));
+
     }
 
 }

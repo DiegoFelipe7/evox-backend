@@ -46,6 +46,9 @@ public class User implements UserDetails  {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public String getTypeOfIdentification() {
+        return typeOfIdentification.getDescription();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

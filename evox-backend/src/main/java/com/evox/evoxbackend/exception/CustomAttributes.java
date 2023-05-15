@@ -3,6 +3,7 @@ package com.evox.evoxbackend.exception;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
@@ -24,10 +25,10 @@ public class CustomAttributes extends DefaultErrorAttributes {
             errorAttributes.put("typeStatus" , customException.getTypeStatus());
         }
         if (throwable instanceof DataIntegrityViolationException) {
-            String message = "Error de integridad de datos";
-            errorAttributes.put("status", customException.getStatus());
-            errorAttributes.put("message", customException.getMessage());
-            errorAttributes.put("typeStatus" , customException.getTypeStatus());
+            String message = "The e-mail address or user is already registered";
+            errorAttributes.put("status", HttpStatus.BAD_REQUEST);
+            errorAttributes.put("message", message);
+            errorAttributes.put("typeStatus" , "Warning");
         }
         return errorAttributes;
     }

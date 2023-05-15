@@ -1,13 +1,18 @@
 package com.evox.evoxbackend.security.jwt;
 
+import com.evox.evoxbackend.exception.CustomException;
+import com.evox.evoxbackend.model.User;
+import com.evox.evoxbackend.utils.enums.TypeStateResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.security.Key;
 import java.util.Date;
@@ -22,10 +27,13 @@ public class JwtProvider {
     private int expiration;
 
     public String generateToken(UserDetails userDetails) {
+        var user = (User) userDetails;
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("fullName" , user.getFullName())
                 .claim("state", userDetails.isEnabled())
                 .claim("roles", userDetails.getAuthorities())
+                .claim("refLink" , user.getRefLink())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000))
                 .signWith(getKey(secret))
@@ -40,6 +48,13 @@ public class JwtProvider {
         return Jwts.parserBuilder().setSigningKey(getKey(secret)).build().parseClaimsJws(token).getBody().getSubject();
     }
 
+    public String extractToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            return getSubject(token);
+        }
+        return "";
+    }
     public boolean validate(String token){
         try {
             Jwts.parserBuilder().setSigningKey(getKey(secret)).build().parseClaimsJws(token).getBody();
